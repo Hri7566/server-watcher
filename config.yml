@@ -8,6 +8,14 @@ servers:
   -
     uri: wss://app_legacy.multiplayerpiano.com:443
   -
-    uri: wss://3000-lapishusky-speedymppser-xj2iw5bkbcp.ws-us71.gitpod.io
+    uri: wss://3000-lapishusky-speedymppser-xj2iw5bkbcp.ws-us71.gitpod.io:443
   -
     uri: wss://mpp.lapishusky.dev
+  -
+    uri: wss://mppws.cf
+  -
+    uri: wss://mppws.gq
+  -
+    uri: wss://piano.ourworldofpixels.com:443
+  -
+    uri: wss://cosmic.hri7566.info
