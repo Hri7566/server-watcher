@@ -138,7 +138,7 @@ let configFile = readFileSync(resolve(__dirname, '../config.yml'));
 let config = YAML.parse(configFile.toString());
 
 if (usingTLS) {
-    const key = readFileSync(resolve(TLSdir, 'key.pem')).toString();
+    const key = readFileSync(resolve(TLSdir, 'privkey.pem')).toString();
     const cert = readFileSync(resolve(TLSdir, 'cert.pem')).toString();
 
     Server.start(config.servers, key, cert);
