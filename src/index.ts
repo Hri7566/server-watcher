@@ -3,7 +3,7 @@ import https from 'https';
 import http from 'http';
 import YAML from 'yaml';
 import net from 'net';
-import { readFileSync } from "fs";
+import { readFile, readFileSync } from "fs";
 import { resolve } from "path";
 import URL from 'url';
 import chokidar from 'chokidar';
@@ -45,7 +45,9 @@ const envInt = (envvar: string) => {
 }
 
 const usingTLS = envIsTrue(process.env.TLS as string);
-const serverPort = envInt(process.env.PORT as string) || 3050;
+const TLSdir = process.env.TLS_DIR || resolve(__dirname, '../ssl/');
+const serverPort: number = envInt(process.env.PORT as string) || 3050;
+const serverHost: string = process.env.HOST || '127.0.0.1';
 
 interface ServerConfig {
     uri: string;
@@ -61,8 +63,9 @@ class Server {
     public static serverInfoList: ServerInfo[] = [];
     public static servers: ServerConfig[] = [];
     public static checkInterval: NodeJS.Timer;
+    public static httpServer: http.Server | https.Server;
 
-    public static start(configs: ServerConfig[]): void {
+    public static start(configs: ServerConfig[], key?: string, cert?: string): void {
         for (let server of configs) {
             this.addServer(server);
         }
@@ -72,8 +75,14 @@ class Server {
         }, 10000);
 
         this.checkServers();
-
         this.app = express();
+        
+        if (key && cert) {
+            this.httpServer = https.createServer({ key, cert }, this.app);
+        } else {
+            this.httpServer = http.createServer(this.app);
+        }
+        
         this.setupRoutes();
         this.listen();
     }
@@ -85,7 +94,7 @@ class Server {
     }
 
     private static listen(): void {
-        this.app.listen(serverPort, () => {
+        this.httpServer.listen(serverPort, serverHost, 32, () => {
             console.log('Server started on port ' + serverPort);
         });
     }
@@ -128,7 +137,14 @@ class Server {
 let configFile = readFileSync(resolve(__dirname, '../config.yml'));
 let config = YAML.parse(configFile.toString());
 
-Server.start(config.servers);
+if (usingTLS) {
+    const key = readFileSync(resolve(TLSdir, 'key.pem')).toString();
+    const cert = readFileSync(resolve(TLSdir, 'cert.pem')).toString();
+
+    Server.start(config.servers, key, cert);
+} else {
+    Server.start(config.servers);
+}
 
 let watcher = chokidar.watch('./config.yml');
 
