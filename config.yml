@@ -1,0 +1,13 @@
+servers:
+  -
+    uri: wss://mppclone.com:8443
+  -
+    uri: wss://www.multiplayerpiano.dev:8043
+  -
+    uri: wss://mpp.hri7566.info:8443
+  -
+    uri: wss://app_legacy.multiplayerpiano.com:443
+  -
+    uri: wss://3000-lapishusky-speedymppser-xj2iw5bkbcp.ws-us71.gitpod.io
+  -
+    uri: wss://mpp.lapishusky.dev
